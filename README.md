@@ -50,7 +50,7 @@ cd indigenous-peace-paradigms
 ```
 
 ### 3. **Or Visit Live Site**
-🌐 **[Live Demo Here](https://melody-sheep.github.io/group3_PICPE_blog)**
+🌐 **[Live Demo Here]([https://melody-sheep.github.io/group3_PICPE_blog](https://melody-sheep.github.io/group3_PICPE_blog_resources/)**
 
 ## 📁 Project Structure
 ```
@@ -173,6 +173,6 @@ This project isn't just a website—it's a **digital bridge** connecting ancient
 
 ### 📬 Connect With the Project
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/melody-sheep/group3_PICPE_blog)
-[![Website](https://img.shields.io/badge/Website-Live-green?style=for-the-badge&logo=google-chrome)](https://melody-sheep.github.io/group3_PICPE_blog)
+[![Website]([https://img.shields.io/badge/Website-Live-green?style=for-the-badge&logo=google-chrome)](https://melody-sheep.github.io/group3_PICPE_blog](https://melody-sheep.github.io/group3_PICPE_blog_resources/)
 
 **"Preserving the past, educating the present, inspiring the future."** 🌿✨
