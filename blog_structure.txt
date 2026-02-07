@@ -1,0 +1,25 @@
+[file name]: blog_structure.txt
+[file content begin]
+project-folder/
+├── index.html
+├── style.css
+├── script.js
+└── assets/
+    └── images/
+        ├── rice_terraces.jpg
+        ├── coral_reef.jpg
+        ├── stone_houses.jpg
+        ├── heritage_houses.jpg
+        ├── community_gathering.jpg
+        ├── spiritual_ritual.jpg
+        ├── ifugao_group.jpg
+        ├── badjao_group.jpg
+        ├── lumad_group.jpg
+        ├── aeta_group.jpg
+        ├── bodong_ceremony.png
+        ├── taritib_court.png
+        ├── panghuwesan_council.jpg
+        ├── peace_ritual_1.png
+        ├── peace_ritual_2.png
+        └── peace_ritual_3.png
+[file content end]
