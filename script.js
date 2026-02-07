@@ -239,6 +239,11 @@ class HeroCarousel {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing carousel and images...');
+  
+  // Preload all images for instant display
+  preloadAllImages();
+  
   // Initialize carousel
   const carousel = new HeroCarousel();
   
@@ -268,7 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rect.top < window.innerHeight && rect.bottom > 0) {
       element.classList.add('active');
     }
-  
+  });
+
   // Heritage cards hover effect
   const heritageCards = document.querySelectorAll('.heritage-card-vertical');
   heritageCards.forEach(card => {
@@ -376,36 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 600);
   }
 
-  // Update QR code if needed (or keep the hardcoded one in HTML)
-  const qrCode = document.querySelector('.qr-code');
-  if (qrCode) {
-    // Uncomment this line if you want to dynamically set the QR code
-    // qrCode.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://melody-sheep.github.io/group3_PICPE_blog';
-  }
-  
-  // Image lazy loading enhancement
-  const images = document.querySelectorAll('img[loading="lazy"]');
-  const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        img.src = img.dataset.src || img.src;
-        imageObserver.unobserve(img);
-      }
-    });
-  }, {
-    rootMargin: '50px 0px',
-    threshold: 0.01
-  });
-  
-  images.forEach(img => {
-    if (!img.complete) {
-      img.dataset.src = img.src;
-      img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
-      imageObserver.observe(img);
-    }
-  });
-  
   // Add keyboard navigation for carousel
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
@@ -455,13 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add loading animation for images
   const sectionImages = document.querySelectorAll('.section-image');
   sectionImages.forEach(img => {
-    img.addEventListener('load', function() {
-      this.style.opacity = '1';
-      this.style.transition = 'opacity 0.5s ease';
-    });
-    
-    // Set initial opacity to 0 for fade-in effect
-    img.style.opacity = '0';
+    // Ensure images are visible immediately
+    img.style.opacity = '1';
   });
   
   // Add print functionality
@@ -538,6 +509,55 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Function to preload all images
+function preloadAllImages() {
+  const images = document.querySelectorAll('img');
+  const totalImages = images.length;
+  let loadedImages = 0;
+  
+  console.log(`Preloading ${totalImages} images...`);
+  
+  images.forEach(img => {
+    // Remove lazy loading for critical images
+    if (img.classList.contains('section-image') || 
+        img.closest('.hero-carousel') || 
+        img.closest('.heritage-card-vertical')) {
+      img.loading = 'eager'; // Force eager loading for important images
+      img.removeAttribute('loading'); // Remove loading attribute completely
+    }
+    
+    // Create a new image object to force preloading
+    const preloadImg = new Image();
+    preloadImg.src = img.src;
+    
+    preloadImg.onload = function() {
+      loadedImages++;
+      console.log(`Loaded ${loadedImages}/${totalImages}: ${img.src}`);
+      
+      // Show the actual image once loaded
+      img.style.opacity = '1';
+      
+      // If this is a hero image, ensure it's visible
+      if (img.closest('.carousel-slide.active')) {
+        img.style.opacity = '1';
+      }
+    };
+    
+    preloadImg.onerror = function() {
+      loadedImages++;
+      console.log(`Failed to load: ${img.src}`);
+      // Use fallback image
+      if (img.getAttribute('onerror')) {
+        const onerrorAttr = img.getAttribute('onerror');
+        if (onerrorAttr.includes("this.src=")) {
+          const fallbackUrl = onerrorAttr.match(/this\.src='([^']+)'/)[1];
+          img.src = fallbackUrl;
+        }
+      }
+    };
+  });
+}
+
 // Header navigation highlighting on scroll
 function highlightNavOnScroll() {
   const sections = document.querySelectorAll('section[id]');
@@ -571,176 +591,18 @@ function highlightNavOnScroll() {
 // Initialize navigation highlighting
 highlightNavOnScroll();
 
-  // Add focus styles for keyboard navigation
-  document.querySelectorAll('a, button').forEach(element => {
-    element.addEventListener('focus', () => {
-      element.style.outline = '2px solid var(--secondary)';
-      element.style.outlineOffset = '2px';
-    });
-    
-    element.addEventListener('blur', () => {
-      element.style.outline = 'none';
-    });
-  });
-
-  // Update QR code if needed (or keep the hardcoded one in HTML)
-  const qrCode = document.querySelector('.qr-code');
-  if (qrCode) {
-    // Uncomment this line if you want to dynamically set the QR code
-    // qrCode.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://melody-sheep.github.io/group3_PICPE_blog';
-  }
-
-  // Image lazy loading enhancement
-  const images = document.querySelectorAll('img[loading="lazy"]');
-  const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        img.src = img.dataset.src || img.src;
-        imageObserver.unobserve(img);
-      }
-    });
-  }, {
-    rootMargin: '50px 0px',
-    threshold: 0.01
-  });
-
-  images.forEach(img => {
-    if (!img.complete) {
-      img.dataset.src = img.src;
-      img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
-      imageObserver.observe(img);
-    }
-  });
-
-  // Add keyboard navigation for carousel
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-      carousel.stopAutoPlay();
-      carousel.showSlide(carousel.currentIndex - 1);
-      carousel.startAutoPlay();
-    } else if (e.key === 'ArrowRight') {
-      carousel.stopAutoPlay();
-      carousel.showSlide(carousel.currentIndex + 1);
-      carousel.startAutoPlay();
-    }
-  });
-
-  // Add touch swipe for mobile carousel
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  const carouselContainer = document.querySelector('.hero-carousel');
-
-  carouselContainer.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-
-  carouselContainer.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  });
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-
-    if (touchEndX < touchStartX - swipeThreshold) {
-      // Swipe left - next slide
-      carousel.stopAutoPlay();
-      carousel.nextSlide();
-      carousel.startAutoPlay();
-    }
-
-    if (touchEndX > touchStartX + swipeThreshold) {
-      // Swipe right - previous slide
-      carousel.stopAutoPlay();
-      carousel.showSlide(carousel.currentIndex - 1);
-      carousel.startAutoPlay();
-    }
-  }
-
-  // Add loading animation for images
-  const sectionImages = document.querySelectorAll('.section-image');
-  sectionImages.forEach(img => {
-    img.addEventListener('load', function() {
-      this.style.opacity = '1';
-      this.style.transition = 'opacity 0.5s ease';
-    });
-
-    // Set initial opacity to 0 for fade-in effect
-    img.style.opacity = '0';
-  });
-
-  // Add print functionality
-  const printButton = document.createElement('button');
-  printButton.className = 'print-btn glass-card';
-  printButton.innerHTML = '<i class="fas fa-print"></i> Print Article';
-  printButton.style.cssText = `
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    padding: 0.8rem 1.5rem;
-    background: var(--gradient);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    z-index: 998;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: var(--transition);
-  `;
-
-  printButton.addEventListener('mouseenter', () => {
-    printButton.style.transform = 'translateY(-3px)';
-    printButton.style.boxShadow = '0 8px 20px rgba(0,0,0,0.4)';
-  });
-
-  printButton.addEventListener('mouseleave', () => {
-    printButton.style.transform = 'translateY(0)';
-    printButton.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
-  });
-
-  printButton.addEventListener('click', () => {
-    window.print();
-  });
-
-  document.body.appendChild(printButton);
-
-  // Responsive adjustments
-  function handleResize() {
-    if (window.innerWidth < 992) {
-      // Adjust hero content for mobile
-      const heroContent = document.querySelector('.hero-content');
-      if (heroContent) {
-        heroContent.style.paddingTop = '80px';
-      }
-    }
-  }
-
-  window.addEventListener('resize', handleResize);
-  handleResize(); // Initial call
-
-  // Add accessibility improvements
+// Also preload images when window loads (fallback)
+window.addEventListener('load', function() {
+  console.log('Window fully loaded, ensuring images are visible...');
+  
+  // Force display of all images
   document.querySelectorAll('img').forEach(img => {
-    if (!img.alt) {
-      img.alt = 'Indigenous cultural image';
-    }
+    img.style.opacity = '1';
+    img.style.visibility = 'visible';
   });
-
-  // Add focus styles for keyboard navigation
-  document.querySelectorAll('a, button').forEach(element => {
-    element.addEventListener('focus', () => {
-      element.style.outline = '2px solid var(--secondary)';
-      element.style.outlineOffset = '2px';
-    });
-
-    element.addEventListener('blur', () => {
-      element.style.outline = 'none';
-    });
+  
+  // Ensure hero images are visible
+  document.querySelectorAll('.carousel-slide img').forEach(img => {
+    img.style.opacity = '1';
   });
 });
